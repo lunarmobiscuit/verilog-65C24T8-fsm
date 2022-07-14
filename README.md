@@ -51,6 +51,12 @@ Total lines of verilog grew by 100 between the 65C2402 adn 65C24T8.  That is 10%
 
 Lines of code doesn't correspond directly to number of gates or transistors, as it takes the same single line to specify one 8-bit A register as eight 8-bit registers.  The netlist is a better judge of that complexity.  The 65C24T8's netlist is 2155 lines long vs. 1773 for the 65C2402.  That is 21% larger.  That seems a reasonable estimate for the additional transistors that would be needed to store the extra 452 bits of registers for eight threads, plus the added decode logic to manage those extra registers. 
 
+## Not hyperthreading
+
+In case you are wondering, this design isn't much at all like hyperthreading on modern processors.  On the ARM and Intel, the CPU has two sets of registers, but to the OS it simply looks like there are two whole CPUs intead of one CPU running two threads.  Hyperthreading was added to keep the CPU busy during cache misses and when I/O would be far slower than CPU speeds.  The two threads on a hyperthreaded CPU can't talk to each other, and can't even tell that there is another thread.
+
+This 6502 threading is instead designed for fast switching between user-controlled threads.  The use case for a 1970s-1980s computer would be to have keyboard input on thread 1, graphics drawing on thread 2, application logic on thread 3, and some other background tasks on other threads.  That way the code for processing input and output and logic could all be cleanly separated, with either a preemptive timer keepign all the threads running or judicious use of THW to drop down to a cooperative scheduler.
+
 
 
 # Based on my verilog-65C2402-fsm
